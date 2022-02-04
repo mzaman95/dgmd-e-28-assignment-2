@@ -1,0 +1,30 @@
+button {
+    background-color: #ffe66c;
+    border: 5px solid #ff6b6c;
+    color: #ff6b6c;
+    font-size: 60px;
+    font-weight: bold;
+    height: 150px;
+    width: 150px;
+}
+
+html {
+    background-color: #f6fff8;
+    font-family: 'Zen Kurenaido', sans-serif;
+    text-align: center;
+}
+
+h1 { 
+    color: #4ecdc4;
+    font-size: 60px;
+}
+
+#gameBoard {
+    margin: auto;
+    width: 32%;
+}
+
+p {
+    color: #1a535c;
+    font-size: 25px;
+}

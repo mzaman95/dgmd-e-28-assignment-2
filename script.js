@@ -1,15 +1,15 @@
 const X = "X";
 const O = "O";
-const PLAYER_X = "Player X";
-const PLAYER_O = "Player O";
+const PLAYER_X_TURN_MSG = "It's Player X's turn.";
+const PLAYER_O_TURN_MSG = "It's Player O's turn.";
 const PLAYER_X_WIN_MSG = "Player X wins!";
 const PLAYER_O_WIN_MSG = "Player O wins!";
 const TIE_MSG = "It's a tie!";
 
 window.onload = function () {
   let count = 0;
-  let currentPlayer = document.getElementById("currentPlayer");
-  let winner = document.getElementById("winner");
+  let message = document.getElementById("message");
+  message.innerHTML = PLAYER_X_TURN_MSG;
 
   let gameBoard = document.getElementById("gameBoard");
   let table = document.createElement("table");
@@ -36,11 +36,11 @@ window.onload = function () {
       if (count % 2 === 0) {
         buttonArray[i].innerHTML = "X";
         buttonArray[i].setAttribute("value", 1);
-        currentPlayer.innerHTML = PLAYER_O;
+        message.innerHTML = PLAYER_O_TURN_MSG;
       } else {
         buttonArray[i].innerHTML = "O";
         buttonArray[i].setAttribute("value", -1);
-        currentPlayer.innerHTML = PLAYER_X;
+        message.innerHTML = PLAYER_X_TURN_MSG;
       }
       buttonArray[i].disabled = true;
       checkForWinner();
@@ -48,9 +48,15 @@ window.onload = function () {
     });
   }
 
+  function disableGrid() {
+    for (let i = 0; i < buttonArray.length; i++) {
+      buttonArray[i].disabled = true;
+    }
+  }
+
   function checkForWinner() {
     if (count === 8) {
-      winner.innerHTML = TIE_MSG;
+      message.innerHTML = TIE_MSG;
     }
 
     // Check for rows:
@@ -62,9 +68,11 @@ window.onload = function () {
       for (let i = 0; i < 3; i++) {
         rowCount += parseInt(rowArray[i].value);
         if (rowCount == 3) {
-          winner.innerHTML = PLAYER_X_WIN_MSG;
+          message.innerHTML = PLAYER_X_WIN_MSG;
+          disableGrid();
         } else if (rowCount == -3) {
-          winner.innerHTML = PLAYER_O_WIN_MSG;
+          message.innerHTML = PLAYER_O_WIN_MSG;
+          disableGrid();
         }
       }
     }
@@ -78,9 +86,11 @@ window.onload = function () {
       for (let i = 0; i < 3; i++) {
         columnCount += parseInt(columnArray[i].value);
         if (columnCount == 3) {
-          winner.innerHTML = PLAYER_X_WIN_MSG;
+          message.innerHTML = PLAYER_X_WIN_MSG;
+          disableGrid();
         } else if (columnCount == -3) {
-          winner.innerHTML = PLAYER_O_WIN_MSG;
+          message.innerHTML = PLAYER_O_WIN_MSG;
+          disableGrid();
         }
       }
     }
@@ -97,9 +107,11 @@ window.onload = function () {
       parseInt(buttonArray[6].value);
 
     if (criss == 3 || cross == 3) {
-      winner.innerHTML = PLAYER_X_WIN_MSG;
+      message.innerHTML = PLAYER_X_WIN_MSG;
+      disableGrid();
     } else if (criss == -3 || cross == -3) {
-      winner.innerHTML = PLAYER_O_WIN_MSG;
+      message.innerHTML = PLAYER_O_WIN_MSG;
+      disableGrid();
     }
   }
 };
