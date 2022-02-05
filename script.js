@@ -6,6 +6,8 @@ const PLAYER_O_TURN_MSG = "It's Player O's turn.";
 const PLAYER_X_WIN_MSG = "Congratulations! Player X wins!";
 const PLAYER_O_WIN_MSG = "Congratulations! Player O wins!";
 const TIE_MSG = "It's a tie!";
+const ROW = "row";
+const COLUMN = "column";
 
 window.onload = function () {
   let count = 0; // number of turns
@@ -66,15 +68,6 @@ window.onload = function () {
     });
   }
 
-  /*
-  This function is called when a winner is declared so that players can not continue to select boxes
-  */
-  function disableGrid() {
-    for (let i = 0; i < buttonArray.length; i++) {
-      buttonArray[i].disabled = true;
-    }
-  }
-
   function checkForWinner() {
     /*
     If all the boxes are filled and no one has won yet, then there is a tie 
@@ -84,80 +77,81 @@ window.onload = function () {
       message.innerHTML = TIE_MSG;
     }
 
-    /*
-    Rows
-    Goes through each row on the grid and adds up the values. 
-    If the values adds up to 3, that means that all buttons in that row was an X (each X was valued at 1), so X wins. 
-    If the values adds up to -3, that means that all buttons in that row was an O (each O was valued at -1), so O wins. 
-    Any other sum of the values means there's a mix of Os and Xs so there are no winning rows. 
-    If there is a winner, the message is updated and the rest of the grid buttons are disabled.
-    */
-    for (let i = 1; i <= 3; i++) {
-      let row = document.querySelectorAll(`[class^="row-${i}"]`);
-      // Converts nodelist to array:
-      let rowArray = Array.from(row);
-      let rowCount = 0;
-      for (let i = 0; i < 3; i++) {
-        rowCount += parseInt(rowArray[i].value);
-        if (rowCount == 3) {
-          message.innerHTML = PLAYER_X_WIN_MSG;
-          disableGrid();
-        } else if (rowCount == -3) {
-          message.innerHTML = PLAYER_O_WIN_MSG;
-          disableGrid();
-        }
-      }
-    }
+    // Checks if there is a streak in any of the grid rows:
+    checkForStreak(ROW);
 
-    /*
-    Columns
-    Goes through each column on the grid and adds up the values. 
-    If the values adds up to 3, that means that all buttons in that column was an X (each X was valued at 1), so X wins. 
-    If the values adds up to -3, that means that all buttons in that column was an O (each O was valued at -1), so O wins. 
-    Any other sum of the values means there's a mix of Os and Xs so there are no winning columns. 
-    If there is a winner, the message is updated and the rest of the grid buttons are disabled.
-    */
-    for (let i = 1; i <= 3; i++) {
-      let column = document.querySelectorAll(`[class*="column-${i}"]`);
-      // Converts nodelist to array:
-      let columnArray = Array.from(column);
-      let columnCount = 0;
-      for (let i = 0; i < 3; i++) {
-        columnCount += parseInt(columnArray[i].value);
-        if (columnCount == 3) {
-          message.innerHTML = PLAYER_X_WIN_MSG;
-          disableGrid();
-        } else if (columnCount == -3) {
-          message.innerHTML = PLAYER_O_WIN_MSG;
-          disableGrid();
-        }
-      }
-    }
+    // Checks if there is a streak in any of the grid columns:
+    checkForStreak(COLUMN);
 
-    /*
-    Diagonals
-    There are two possible diagonals: \ and / 
-    If the values adds up to 3, that means that all buttons in that diagonal was an X (each X was valued at 1), so X wins. 
-    If the values adds up to -3, that means that all buttons in that diagonal was an O (each O was valued at -1), so O wins. 
-    Any other sum of the values means there's a mix of Os and Xs so there are no winning diagonals. 
-    If there is a winner, the message is updated and the rest of the grid buttons are disabled.
-    */
+    // Checks if there is a streak in any of the diagonals:
+    // There are two possible diagonals: \ and /
     let criss =
       parseInt(buttonArray[0].value) +
       parseInt(buttonArray[4].value) +
       parseInt(buttonArray[8].value);
+
+    checkForWin(criss);
 
     let cross =
       parseInt(buttonArray[2].value) +
       parseInt(buttonArray[4].value) +
       parseInt(buttonArray[6].value);
 
-    if (criss == 3 || cross == 3) {
+    checkForWin(cross);
+  }
+
+  /*
+    Checks for Streks within the Rows and Columns
+    Goes through each row/column on the grid and adds up the values (gridLineCount) in that particular row/column.
+    The total is then passed to checkForWin() function.  
+    */
+  function checkForStreak(series) {
+    let querySelector = "";
+    for (let i = 1; i <= 3; i++) {
+      if (series == ROW) {
+        querySelector = `[class^="row-${i}"]`;
+      } else if (series == COLUMN) {
+        querySelector = `[class*="column-${i}"]`;
+      }
+      let gridLine = document.querySelectorAll(querySelector);
+      // Converts nodelist to array:
+      let gridLineArray = Array.from(gridLine);
+      let gridLineCount = 0;
+      for (let i = 0; i < 3; i++) {
+        gridLineCount += parseInt(gridLineArray[i].value);
+        checkForWin(gridLineCount);
+      }
+    }
+  }
+
+  /*
+    If the values adds up to 3, that means that all buttons in that line was an X (each X was valued at 1), so X wins. 
+    If the values adds up to -3, that means that all buttons in that line was an O (each O was valued at -1), so O wins. 
+    Any other sum of the values means there's a mix of Os and Xs so there are no winning lines. 
+    If there is a winner, declare winner is called. 
+    */
+  function checkForWin(count) {
+    if (count == 3) {
+      declareWinner(X);
+    } else if (count == -3) {
+      declareWinner(O);
+    }
+  }
+
+  //  This updates the message on the screen to announce the winner and then disableGrid is called.
+  function declareWinner(winner) {
+    if (winner == X) {
       message.innerHTML = PLAYER_X_WIN_MSG;
-      disableGrid();
-    } else if (criss == -3 || cross == -3) {
+    } else if (winner == O) {
       message.innerHTML = PLAYER_O_WIN_MSG;
-      disableGrid();
+    }
+    disableGrid();
+  }
+
+  // This function is called when a winner is declared so that players can not continue to select boxes.
+  function disableGrid() {
+    for (let i = 0; i < buttonArray.length; i++) {
+      buttonArray[i].disabled = true;
     }
   }
 };
