@@ -139,7 +139,7 @@ window.onload = function () {
     There are two possible diagonals: \ and / 
     If the values adds up to 3, that means that all buttons in that diagonal was an X (each X was valued at 1), so X wins. 
     If the values adds up to -3, that means that all buttons in that diagonal was an O (each O was valued at -1), so O wins. 
-    Any other sum of the values means there's a mix of Os and Xs so there are no winning columns. 
+    Any other sum of the values means there's a mix of Os and Xs so there are no winning diagonals. 
     If there is a winner, the message is updated and the rest of the grid buttons are disabled.
     */
     let criss =
